@@ -8,37 +8,32 @@ public class Main {
 		int n = Integer.parseInt(br.readLine());
 
 		StringTokenizer st = new StringTokenizer(br.readLine());
-		int[] distance = new int[n - 1];
-		int totalDistance = 0;
+		long[] distance = new long[n - 1];
 		for (int i = 0; i < n - 1; i++) {
 			distance[i] = Integer.parseInt(st.nextToken());
-			totalDistance += distance[i];
 		}
 
 		st = new StringTokenizer(br.readLine());
-		int[] price = new int[n];
+		long[] price = new long[n];
 		for (int i = 0; i < n; i++) {
-			price[i] = Integer.parseInt(st.nextToken());
+			price[i] = Long.parseLong(st.nextToken());
 		}
 
-		int minPrice = solve(totalDistance, distance, price);
+		long minPrice = solve(distance, price);
 
 		System.out.println(minPrice);
 	}
 
-	private static int solve(int totalDistance, int[] distance, int[] price) {
-		int minPrice = 0;
+	private static long solve(long[] distance, long[] price) {
+		long sum = 0;
+		long min = price[0];
 
-		for (int i = 0; i < price.length - 1; i++) {
-			if (price[i] > price[i + 1]) {
-				minPrice += price[i] * distance[i];
-				totalDistance -= distance[i];
-			} else {
-				minPrice += price[i] * totalDistance;
-				break;
+		for(int i=0; i<distance.length; i++) {
+			if(price[i] < min) {
+				min = price[i];
 			}
+			sum += min * distance[i];
 		}
-
-		return minPrice;
+		return sum;
 	}
 }
