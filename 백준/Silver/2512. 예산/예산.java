@@ -2,55 +2,61 @@
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class Main{
+
 	private static int n;
 	private static int[] prices;
+	private static int total;
+	private static int target;
+
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		n = Integer.parseInt(br.readLine());
 
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		prices = new int[n];
-		int sum = 0;
+		total = 0;
 		for (int i = 0; i < n; i++) {
 			prices[i] = Integer.parseInt(st.nextToken());
-			sum += prices[i];
+			total += prices[i];
 		}
 
-		int target = Integer.parseInt(br.readLine());
+		target = Integer.parseInt(br.readLine());
 
 		Arrays.sort(prices);
 
-		if (sum <= target) {
+		if (total <= target) {
 			System.out.println(prices[n - 1]);
 			return;
 		}
 
-		int result = binarySearch(prices, target);
-		System.out.println(result);
+		int max = binarySearch();
+		System.out.println(max);
 	}
 
-	private static int binarySearch(int[] prices, int target) {
-		int low = 0;
-		int high = prices[n - 1];
+	private static int binarySearch() {
+		int start = 0;
+		int end = prices[n - 1];
 
-		while (low < high - 1) {
-			int mid = (low + high) / 2;
+		while (start < end - 1) {
+			int mid = (start + end) / 2;
 
-			if (calculatePrices(mid) > target) {
-				high = mid;
+			int calculateSum = calculate(mid);
+
+			if (calculateSum > target) {
+				end = mid;
 			} else {
-				low = mid;
+				start = mid;
 			}
 		}
-		return low;
+		return start;
 	}
 
-	private static int calculatePrices(int mid) {
-		int total = 0;
+	private static int calculate(int mid) {
+		int sum = 0;
 		for (int i = 0; i < n; i++) {
-			total += Math.min(prices[i], mid);
+			sum += Math.min(mid, prices[i]);
 		}
-		return total;
+		return sum;
 	}
 }
