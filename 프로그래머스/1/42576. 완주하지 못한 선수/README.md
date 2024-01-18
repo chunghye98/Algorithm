@@ -75,3 +75,15 @@
 
 
 > 출처: 프로그래머스 코딩 테스트 연습, https://school.programmers.co.kr/learn/challenges
+
+---
+
+### 풀이
+HashMap에서 getOrDefault() 메서드를 사용하면 map에 존재하지 않을 경우 추가하고, 존재할 경우 value에 +1 하도록 만들 수 있다.
+- V getOrDefault(Object Key, Object defaultValue)
+- 찾는 key가 존재한다면 찾는 key의 value를 반환하고 없거나 null이면 default 값을 반환한다.
+```
+for (String p : participant) {
+    map.put(p, map.getOrDefault(p, 0) + 1);
+}
+```
