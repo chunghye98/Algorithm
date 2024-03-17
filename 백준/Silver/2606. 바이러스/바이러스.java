@@ -1,60 +1,52 @@
-
 import java.io.*;
 import java.util.*;
 
-/*
-바이러스
-- 시간 제한: 1초
-- 메모리 제한: 128MB
- */
+
 public class Main {
-	private static List<List<Integer>> graph;
-	private static boolean[] visit;
-	public static void main(String[] args) throws Exception {
+
+	static List<List<Integer>> list = new ArrayList<>();
+	static boolean[] visited;
+	public static void main(String[] args) throws Exception{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int nodeN = Integer.parseInt(br.readLine());
+		int edgeN = Integer.parseInt(br.readLine());
 
-		int n = Integer.parseInt(br.readLine()); // 컴퓨터의 수
-		int edge = Integer.parseInt(br.readLine()); // 컴퓨터 쌍의 수
-
-		graph = new ArrayList<>();
-		visit = new boolean[n + 1];
-		for (int i = 0; i <= n; i++) {
-			graph.add(new ArrayList<>());
+		for(int i=0; i<=nodeN; i++) {
+			list.add(new ArrayList<>());
 		}
 
-		StringTokenizer st;
-		for (int i = 0; i < edge; i++) {
-			st = new StringTokenizer(br.readLine());
+		visited = new boolean[nodeN+1];
 
+		StringTokenizer st;
+		for(int i=0; i<edgeN; i++) {
+			st = new StringTokenizer(br.readLine());
 			int u = Integer.parseInt(st.nextToken());
 			int v = Integer.parseInt(st.nextToken());
 
-			graph.get(u).add(v);
-			graph.get(v).add(u);
+			list.get(u).add(v);
+			list.get(v).add(u);
 		}
 
-		int count = bfs(1);
-
-		System.out.println(count);
+		System.out.println(bfs(1));
 	}
 
-	private static int bfs(int node) {
+	private static int bfs(int start) {
 		int count = 0;
+		visited[start] = true;
 		Queue<Integer> queue = new LinkedList<>();
-		visit[node] = true;
-		queue.add(node);
+		queue.add(start);
 
 		while (!queue.isEmpty()) {
-			int parent = queue.poll();
-			for (int child : graph.get(parent)) {
-				if (!visit[child]) {
-					queue.add(child);
-					visit[child] = true;
+			int current = queue.poll();
+
+			for (int next : list.get(current)) {
+				if (!visited[next]) {
 					count++;
+					visited[next] = true;
+					queue.add(next);
 				}
 			}
 		}
-
 		return count;
 	}
 }
