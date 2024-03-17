@@ -4,91 +4,83 @@ import java.util.*;
 
 public class Main {
 
-	private static int[][] graph;
-	private static boolean[][] visited;
-	private static int[] dy = {-1, 0, 1, 0}; // 상우하좌
-	private static int[] dx = {0, 1, 0, -1}; // 상우하좌
-	private static int n;
+	static int[][] graph;
+	static boolean[][] visit;
+	static int[] dx = {0, 1, 0, -1}; // 상,우,하,좌
+	static int[] dy = {-1, 0, 1, 0};
+	static int n;
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		n = Integer.parseInt(br.readLine());
 
+		visit = new boolean[n][n];
 		graph = new int[n][n];
-		visited = new boolean[n][n];
 		for (int i = 0; i < n; i++) {
-			String[] temp = br.readLine().split("");
-			for (int j = 0; j < n; j++) {
-				graph[i][j] = Integer.parseInt(temp[j]);
+			String[] inputs = br.readLine().split("");
+			for (int j = 0; j < inputs.length; j++) {
+				graph[i][j] = Integer.parseInt(inputs[j]);
 			}
 		}
 
-		int count = 0;
-		List<Integer> results = new ArrayList<>();
+		List<Integer> counts = new ArrayList<>();
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
-				if (graph[i][j] == 0 || visited[i][j]) {
+				if (graph[i][j] == 0 || visit[i][j]) {
 					continue;
 				}
-
-				int size = bfs(i, j);
-				if (size > 0) {
-					count++;
-					results.add(size);
-				}
+				counts.add(bfs(i, j));
 			}
 		}
 
-		Collections.sort(results);
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(count + "\n");
-		for (int value : results) {
-			sb.append(value + "\n");
+		Collections.sort(counts);
+		System.out.println(counts.size());
+		for (int count : counts) {
+			System.out.println(count);
 		}
-		sb.delete(sb.length() - 1, sb.length());
-		System.out.println(sb);
 	}
 
-	private static int bfs(int y, int x) {
+	private static int bfs(int row, int col) {
 		Queue<MyPoint1> queue = new LinkedList<>();
-		queue.add(new MyPoint1(y, x));
-		visited[y][x] = true;
-		int size = 1;
+		queue.add(new MyPoint1(row, col));
+		visit[row][col] = true;
+		int count = 1;
 
 		while (!queue.isEmpty()) {
-			MyPoint1 now = queue.poll();
-			int nowY = now.y;
-			int nowX = now.x;
+			MyPoint1 current = queue.poll();
+			int curRow = current.row;
+			int curCol = current.col;
 
 			for (int i = 0; i < 4; i++) {
-				int nextY = nowY + dy[i];
-				int nextX = nowX + dx[i];
+				int nextRow = curRow + dy[i];
+				int nextCol = curCol + dx[i];
 
-				if (nextY < 0 || nextX < 0 || nextY >= n || nextX >= n) {
-					continue;
+				if (isRange(nextRow, nextCol)) {
+					if (!visit[nextRow][nextCol] && graph[nextRow][nextCol] == 1) {
+						queue.add(new MyPoint1(nextRow, nextCol));
+						visit[nextRow][nextCol] = true;
+						count++;
+					}
 				}
-
-				if (visited[nextY][nextX] || graph[nextY][nextX] == 0) {
-					continue;
-				}
-
-				visited[nextY][nextX] = true;
-				size++;
-				queue.add(new MyPoint1(nextY, nextX));
 			}
 		}
+		return count;
+	}
 
-		return size;
+	private static boolean isRange(int nextRow, int nextCol) {
+		if (nextRow < 0 || nextCol < 0 || nextRow >= n || nextCol >= n) {
+			return false;
+		}
+		return true;
 	}
 }
 
 class MyPoint1 {
-	int y;
-	int x;
+	int row;
+	int col;
 
-	public MyPoint1(int y, int x) {
-		this.y = y;
-		this.x = x;
+	MyPoint1(int row, int col) {
+		this.row = row;
+		this.col = col;
 	}
 }
