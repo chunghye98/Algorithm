@@ -1,69 +1,76 @@
-/* DFS와 BFS
-- 시간 제한: 2초
-- DFS: 보통 stack이나 재귀 사용
-- BFS: 보통 queue 사용
-
- */
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
-        int v = Integer.parseInt(st.nextToken());
 
-        int[][] map = new int[n + 1][n + 1];
-        for (int i = 0; i < m; i++) {
-            st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
-            map[a][b] = 1;
-            map[b][a] = 1;
-        }
-        boolean[] visited = new boolean[n + 1];
-        StringBuilder sb = new StringBuilder();
-        System.out.println(dfs(map, v, visited, sb));
+	static List<List<Integer>> graph = new ArrayList<>();
+	static boolean[] visitDFS;
+	static boolean[] visitBFS;
 
-        visited = new boolean[n + 1];
-        sb = new StringBuilder();
-        System.out.println(bfs(map, v, visited, sb));
+	static StringBuilder sb = new StringBuilder();
 
-    }
+	public static void main(String[] args) throws Exception{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int nodeN = Integer.parseInt(st.nextToken());
+		int edgeN = Integer.parseInt(st.nextToken());
+		int start = Integer.parseInt(st.nextToken());
 
-    private static String bfs(int[][] map, int index, boolean[] visited, StringBuilder sb) {
-        Queue<Integer> queue = new LinkedList();
-        queue.offer(index);
-        visited[index] = true;
+		visitBFS = new boolean[nodeN + 1];
+		visitDFS = new boolean[nodeN + 1];
+		for (int i = 0; i <= nodeN; i++) {
+			graph.add(new ArrayList<>());
+		}
 
-        while (!queue.isEmpty()) {
-            int node = queue.poll();
-            sb.append(node).append(" ");
-            for (int i = 1; i < map.length; i++) {
-                if (map[node][i] == 1 && !visited[i]) {
-                    queue.offer(i);
-                    visited[i] = true;
-                }
-            }
-        }
-        return sb.toString();
-    }
-    private static String dfs(int[][] map, int index, boolean[] visited, StringBuilder sb) {
-        visited[index] = true;
-        sb.append(index);
-        for (int i = 1; i < map.length; i++) {
-            if (map[index][i] == 1 && !visited[i]) {
-                sb.append(" ");
-                dfs(map, i, visited, sb);
-            }
-        }
-        return sb.toString();
-    }
+		for (int i = 0; i < edgeN; i++) {
+			st = new StringTokenizer(br.readLine());
+			int u = Integer.parseInt(st.nextToken());
+			int v = Integer.parseInt(st.nextToken());
+
+			graph.get(u).add(v);
+			graph.get(v).add(u);
+		}
+
+        // 연결 된 노드가 다양할 경우 작은 노드부터 처리하기 위해 정렬
+		for (int i = 1; i <= nodeN; i++) {
+			Collections.sort(graph.get(i));
+		}
+
+		System.out.println(dfs(start));
+		sb = new StringBuilder();
+		System.out.println(bfs(start));
+	}
+
+	private static String bfs(int start) {
+		Queue<Integer> queue = new LinkedList<>();
+		queue.add(start);
+		visitBFS[start] = true;
+		sb.append(start + " ");
+
+		while (!queue.isEmpty()) {
+			int current = queue.poll();
+
+			for (int next : graph.get(current)) {
+				if (!visitBFS[next]) {
+					sb.append(next + " ");
+					visitBFS[next] = true;
+					queue.add(next);
+				}
+			}
+		}
+		return sb.toString();
+	}
+
+	private static String dfs(int start) {
+		visitDFS[start] = true;
+		sb.append(start + " ");
+
+		for (int next : graph.get(start)) {
+			if (!visitDFS[next]) {
+				dfs(next);
+			}
+		}
+
+		return sb.toString();
+	}
 }
