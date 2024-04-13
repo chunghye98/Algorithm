@@ -1,72 +1,90 @@
+
 import java.io.*;
 import java.util.*;
 
-public class Main {
-    private static List<List<Node>> list;
-    private static int[] dist;
+public class Maiin {
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int n = Integer.parseInt(st.nextToken()); // 도시 수
-        int m = Integer.parseInt(st.nextToken()); // 도로 수
-        int k = Integer.parseInt(st.nextToken()); // 거리 정보
-        int start = Integer.parseInt(st.nextToken()); // 출발 도시
+	static List<List<MyNode>> graph = new ArrayList<>();
+	static int[] dist;
+	static boolean[] visited;
+    
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int n = Integer.parseInt(st.nextToken());
+		int m = Integer.parseInt(st.nextToken());
+		int k = Integer.parseInt(st.nextToken());
+		int x = Integer.parseInt(st.nextToken());
 
-        dist = new int[n + 1];
-        Arrays.fill(dist, Integer.MAX_VALUE);
+		for (int i = 0; i <= n; i++) {
+			graph.add(new ArrayList<>());
+		}
 
-        list = new ArrayList<>(); // 연결 리스트 생성
-        for (int i = 0; i <= n; i++) {
-            list.add(new ArrayList<>());
-        }
+		for (int i = 0; i < m; i++) {
+			st = new StringTokenizer(br.readLine());
+			int u = Integer.parseInt(st.nextToken());
+			int v = Integer.parseInt(st.nextToken());
+			graph.get(u).add(new MyNode(v, 1));
+		}
 
-        for (int i = 0; i < m; i++) {
-            st = new StringTokenizer(br.readLine());
-            int u = Integer.parseInt(st.nextToken());
-            int v = Integer.parseInt(st.nextToken());
-            list.get(u).add(new Node(v, 1));
-        }
+		visited = new boolean[n + 1];
+		dist = new int[n + 1];
+		Arrays.fill(dist, Integer.MAX_VALUE);
 
-        bfs(start);
+		dijkstra(x);
 
-        boolean flag = false;
-        for (int i = 1; i < dist.length; i++) {
-            if (dist[i] == k) {
-                System.out.println(i);
-                flag = true;
-            }
-        }
+		List<Integer> result = new ArrayList<>();
+		for (int i = 1; i < dist.length; i++) {
+			if (dist[i] == k) {
+				result.add(i);
+			}
+		}
 
-        if (!flag) {
-            System.out.println(-1);
-        }
-    }
+		if (result.isEmpty()) {
+			System.out.println(-1);
+			return;
+		}
 
-    private static void bfs(final int start) {
-        Queue<Node> queue = new LinkedList<>();
-        queue.add(new Node(start, 0));
-        dist[start] = 0;
+		Collections.sort(result);
+		for (Integer value : result) {
+			System.out.println(value);
+		}
+	}
 
-        while (!queue.isEmpty()) {
-            Node parent = queue.poll();
+	private static void dijkstra(int start) {
+		PriorityQueue<MyNode> queue = new PriorityQueue<>();
+		queue.add(new MyNode(start, 0));
+		dist[start] = 0;
 
-            for (Node child : list.get(parent.index)) {
-                if (dist[child.index] > parent.distance + child.distance) {
-                    dist[child.index] = parent.distance + child.distance;
-                    queue.add(new Node(child.index, dist[child.index]));
-                }
-            }
-        }
-    }
+		while (!queue.isEmpty()) {
+			int nowIndex = queue.poll().index;
+
+			if (visited[nowIndex]) continue;  // 이미 방문한 노드는 스킵
+			visited[nowIndex] = true;
+
+			for(MyNode next : graph.get(nowIndex)) {
+				if (dist[next.index] > dist[nowIndex] + next.cost) {
+					dist[next.index] = dist[nowIndex] + next.cost;
+
+					queue.add(new MyNode(next.index, dist[next.index]));
+				}
+			}
+		}
+	}
 }
 
-class Node {
-    int index;
-    int distance;
+class MyNode implements Comparable<MyNode>{
+	int index;
+	int cost;
 
-    public Node(final int index, final int distance) {
-        this.index = index;
-        this.distance = distance;
-    }
+	MyNode(int index, int cost) {
+		this.index = index;
+		this.cost = cost;
+	}
+
+	@Override
+	public int compareTo(MyNode o) {
+		return this.cost - o.cost;
+	}
+
 }
