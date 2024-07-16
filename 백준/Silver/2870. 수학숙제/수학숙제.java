@@ -9,7 +9,7 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int n = Integer.parseInt(br.readLine());
 		
-		List<BigDecimal> numbers = new ArrayList<>();
+		List<BigInteger> numbers = new ArrayList<>();
 		for(int i=0; i<n; i++) {
 			String input = br.readLine();
 			
@@ -18,12 +18,12 @@ public class Main {
 			
 			while(numberMatcher.find()) {
 				String matched = numberMatcher.group();
-	            numbers.add(new BigDecimal(matched));
+	            numbers.add(new BigInteger(matched));
 			}
 		}
 		Collections.sort(numbers);
 		
-		for(BigDecimal v : numbers) {
+		for(BigInteger v : numbers) {
 			System.out.println(v);
 		}
 
