@@ -1,20 +1,6 @@
 import java.io.*;
 import java.util.*;
 
-/*
-[브루트포스]
-1. 첫 꽃을 심을 자리 찾기(i, j)
-2. sum = 0으로 초기화
-3. 꽃 심을 자리 찾으면 map 밖으로 벗어나지 않는지 검사
-3-1. 밖으로 벗어나면 다시 첫 꽃을 심을 자리 찾기
-3-2. 벗어나지 않으면 두번째 꽃을 심을 자리 찾기
-    1. 밖으로 벗어나거나 첫 꽃의 자리와 겹치면 다른 자리 찾기
-    2. 자리 찾으면 세번째 꽃을 심을 자리 찾기
-        1. 밖으로 벗어나거나 첫번째, 두번째 꽃의 자리와 겹치면 다른 자리 찾기
-        2. 자리 찾으면 첫번째, 두번째, 세번째 꽃의 자리값을 sum 
-        3. 각 sum마다 min 값을 구하기
-4. min값 출력
-*/
 public class Main {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
