@@ -9,7 +9,6 @@ public class Main {
     static int[][] map;
     static boolean[][] visitFirst;
     static boolean[][] visitSecond;
-    static boolean[][] visitThird;
     static int[][] d = {{0, 0}, {-1, 0}, {0, 1}, {1, 0}, {0, -1}}; // 중, 상, 우, 하, 좌
 
     public static void main(String[] args) throws Exception {
@@ -29,7 +28,6 @@ public class Main {
             for(int j=0; j<n; j++) {
                 visitFirst = new boolean[n][n];
                 visitSecond = new boolean[n][n];
-                visitThird = new boolean[n][n];
 
                 int firstFlower = getFlowerFirst(i, j);
                 if(firstFlower == -1) {
@@ -49,7 +47,6 @@ public class Main {
                             for(int o=0; o<n; o++) {
                                 int thirdFlower = getFlowerThird(m, o);
                                 if(thirdFlower == -1) {
-                                    visitThird = new boolean[n][n];
                                     continue;
                                 }
                                 sum = firstFlower + secondFlower + thirdFlower;
@@ -106,7 +103,6 @@ public class Main {
             }
 
             price += map[curY][curX];
-            visitThird[curY][curX] = true;
         }
         return price;
     }
