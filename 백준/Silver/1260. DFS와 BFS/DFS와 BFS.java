@@ -1,76 +1,83 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
 
-	static List<List<Integer>> graph = new ArrayList<>();
-	static boolean[] visitDFS;
-	static boolean[] visitBFS;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
+    static int nodeN;
+    static int edgeN;
+    static int start;
+    static List<List<Integer>> graph = new ArrayList<>();
+    static boolean[] visit;
 
-	static StringBuilder sb = new StringBuilder();
+    public static void main(String[] args) throws Exception {
+        input();
 
-	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		int nodeN = Integer.parseInt(st.nextToken());
-		int edgeN = Integer.parseInt(st.nextToken());
-		int start = Integer.parseInt(st.nextToken());
+        dfs(start);
+        sb.append("\n");
+        visit = new boolean[nodeN + 1];
 
-		visitBFS = new boolean[nodeN + 1];
-		visitDFS = new boolean[nodeN + 1];
-		for (int i = 0; i <= nodeN; i++) {
-			graph.add(new ArrayList<>());
-		}
+        bfs(start);
 
-		for (int i = 0; i < edgeN; i++) {
-			st = new StringTokenizer(br.readLine());
-			int u = Integer.parseInt(st.nextToken());
-			int v = Integer.parseInt(st.nextToken());
+        System.out.println(sb);
+        br.close();
+    }
 
-			graph.get(u).add(v);
-			graph.get(v).add(u);
-		}
+    private static void bfs(int start) {
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(start);
+        sb.append(start).append(" ");
+        visit[start] = true;
+
+        while(!queue.isEmpty()) {
+            int cur = queue.poll();
+
+            for (int next : graph.get(cur)) {
+                if (!visit[next]) {
+                    visit[next] = true;
+                    sb.append(next).append(" ");
+                    queue.add(next);
+                }
+            }
+        }
+    }
+
+    private static void dfs(int start) {
+        visit[start] = true;
+        sb.append(start).append(" ");
+
+        for (Integer v : graph.get(start)) {
+            if (!visit[v]) {
+                visit[v] = true;
+                dfs(v);
+            }
+        }
+    }
+
+    public static void input() throws Exception {
+        String[] temp = br.readLine().split(" ");
+        nodeN = Integer.parseInt(temp[0]);
+        edgeN = Integer.parseInt(temp[1]);
+        start = Integer.parseInt(temp[2]);
+        visit = new boolean[nodeN + 1];
+
+        for (int i = 0; i <= nodeN; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        for (int i = 0; i < edgeN; i++) {
+            String[] nodes = br.readLine().split(" ");
+            int u = Integer.parseInt(nodes[0]);
+            int v = Integer.parseInt(nodes[1]);
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
 
         // 연결 된 노드가 다양할 경우 작은 노드부터 처리하기 위해 정렬
-		for (int i = 1; i <= nodeN; i++) {
-			Collections.sort(graph.get(i));
-		}
-
-		System.out.println(dfs(start));
-		sb = new StringBuilder();
-		System.out.println(bfs(start));
-	}
-
-	private static String bfs(int start) {
-		Queue<Integer> queue = new LinkedList<>();
-		queue.add(start);
-		visitBFS[start] = true;
-		sb.append(start + " ");
-
-		while (!queue.isEmpty()) {
-			int current = queue.poll();
-
-			for (int next : graph.get(current)) {
-				if (!visitBFS[next]) {
-					sb.append(next + " ");
-					visitBFS[next] = true;
-					queue.add(next);
-				}
-			}
-		}
-		return sb.toString();
-	}
-
-	private static String dfs(int start) {
-		visitDFS[start] = true;
-		sb.append(start + " ");
-
-		for (int next : graph.get(start)) {
-			if (!visitDFS[next]) {
-				dfs(next);
-			}
-		}
-
-		return sb.toString();
-	}
+        for (int i = 1; i <= nodeN; i++) {
+            Collections.sort(graph.get(i));
+        }
+    }
 }
