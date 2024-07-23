@@ -1,52 +1,53 @@
-import java.io.*;
-import java.util.*;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
-	static List<List<Integer>> list = new ArrayList<>();
-	static boolean[] visited;
-	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int nodeN = Integer.parseInt(br.readLine());
-		int edgeN = Integer.parseInt(br.readLine());
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static int n;
+    static int e;
+    static boolean[] visit;
+    static List<List<Integer>> graph = new ArrayList<>();
+    static int ans = 0;
 
-		for(int i=0; i<=nodeN; i++) {
-			list.add(new ArrayList<>());
-		}
+    public static void main(String[] args) throws Exception  {
+        input();
+        dfs(1);
+        System.out.println(ans);
+        br.close();
+    }
 
-		visited = new boolean[nodeN+1];
+    private static void dfs(int start) {
+        visit[start] = true;
 
-		StringTokenizer st;
-		for(int i=0; i<edgeN; i++) {
-			st = new StringTokenizer(br.readLine());
-			int u = Integer.parseInt(st.nextToken());
-			int v = Integer.parseInt(st.nextToken());
+        for (int v : graph.get(start)) {
+            if (visit[v]) {
+                continue;
+            }
+            ans++;
+            dfs(v);
+        }
+    }
 
-			list.get(u).add(v);
-			list.get(v).add(u);
-		}
+    private static void input() throws Exception {
+        n = Integer.parseInt(br.readLine());
+        e = Integer.parseInt(br.readLine());
 
-		System.out.println(bfs(1));
-	}
+        for (int i = 0; i <= n; i++) {
+            graph.add(new ArrayList<>());
+        }
 
-	private static int bfs(int start) {
-		int count = 0;
-		visited[start] = true;
-		Queue<Integer> queue = new LinkedList<>();
-		queue.add(start);
+        for (int i = 0; i < e; i++) {
+            String[] temp = br.readLine().split(" ");
+            int u = Integer.parseInt(temp[0]);
+            int v = Integer.parseInt(temp[1]);
 
-		while (!queue.isEmpty()) {
-			int current = queue.poll();
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
 
-			for (int next : list.get(current)) {
-				if (!visited[next]) {
-					count++;
-					visited[next] = true;
-					queue.add(next);
-				}
-			}
-		}
-		return count;
-	}
+        visit = new boolean[n + 1];
+    }
 }
