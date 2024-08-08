@@ -22,13 +22,7 @@ public class Main {
     }
 
     private static void solve(int sy, int sx, int ey, int ex) {
-        if(ey - sy == 1 || ex - sx == 1) {
-                count.put(map[sy][sx], count.get(map[sy][sx]) + 1);
-            return;
-        }
-
-        boolean isEqual = isEqual(sy, sx, ey, ex);
-        if(isEqual) {
+        if(isEqual(sy, sx, ey, ex)) {
             count.put(map[sy][sx], count.get(map[sy][sx]) + 1);
             return;
         }
@@ -41,8 +35,6 @@ public class Main {
         solve((sy + ey) / 2, (sx + ex) / 2, ey, ex);
         // 왼하
         solve((sy + ey) / 2, sx, ey, (sx + ex) / 2);
-
-
     }
 
     private static boolean isEqual(int sy, int sx, int ey, int ex) {
@@ -68,7 +60,7 @@ public class Main {
             }
         }
 
-        count.put(0, 0);
-        count.put(1, 0);
+        count.put(0, 0); // white count
+        count.put(1, 0); // blue count
     }
 }
