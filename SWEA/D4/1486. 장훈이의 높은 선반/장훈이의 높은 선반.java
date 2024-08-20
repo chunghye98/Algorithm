@@ -20,7 +20,7 @@ public class Solution {
 		T = Integer.parseInt(br.readLine());
 		for (int i = 1; i <= T; i++) {
 			init();
-			solve();
+			makeSubSet(0);
 			output(i);
 		}
 		System.out.println(sb);
@@ -28,12 +28,6 @@ public class Solution {
 	
 	public static void output(int t) {
 		sb.append("#").append(t).append(" ").append(min).append("\n");
-	}
-
-	public static void solve() {
-		Collections.reverse(heights);
-
-		makeSubSet(0);
 	}
 
 	public static void makeSubSet(int cnt) {
