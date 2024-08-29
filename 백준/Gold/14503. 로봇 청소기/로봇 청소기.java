@@ -1,6 +1,13 @@
 import java.util.*;
 import java.io.*;
 
+/**
+ * 14503. 로봇청소기
+ * 메모리 14420 kb
+ * 시간 108 ms
+ *
+ * 구현, 시뮬레이션
+ */
 public class Main {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -29,28 +36,15 @@ public class Main {
 
         while(true) {
             // 현재 칸이 청소되지 않은 경우 현재 칸을 청소한다.
-            if(map[robot.y][robot.x] == 0) {
-                cleaning[robot.y][robot.x] = true;
-            }
+            cleanThisPoint();
 
             // 현재 칸의 주변 4칸의 청소 상태 확인
-            boolean flag = false;
-            for (int i = 0; i < 4; i++) {
-                int ny = robot.y + dxy[i][0];
-                int nx = robot.x + dxy[i][1];
+            boolean isDirty = findCleaningStatus();
 
-                if (!isRange(ny, nx) || cleaning[ny][nx]) {
-                    continue;
-                }
-
-                // 청소되지 않는 빈 칸이 있는 경우
-                if (map[ny][nx] == 0) {
-                    flag = true;
-                }
-            }
 
             // 주변에 청소되지 않은 칸이 없는 경우
-            if(!flag) {
+            if(!isDirty) {
+                
                 int ny = robot.y + dxy[robot.d][0] * -1;
                 int nx = robot.x + dxy[robot.d][1] * -1;
 
@@ -66,22 +60,28 @@ public class Main {
             // 주변에 청소된 칸이 있는 경우
             else {
                 // 반시계 방향으로 90% 회전한다.
-                for(int i=0; i<4; i++) {
+                for (int i = 0; i < 4; i++) {
                     robot.d = (robot.d + 3) % 4;
 
                     int ny = robot.y + dxy[robot.d][0];
                     int nx = robot.x + dxy[robot.d][1];
 
-                    // 앞쪽 칸이 청소되지 않은 빈 칸인 경우 한 칸 전진한다.
-                    if (isRange(ny, nx) && map[ny][nx] == 0 && !cleaning[ny][nx]) {
-                        robot.y += dxy[robot.d][0];
-                        robot.x += dxy[robot.d][1];
-                        break;
+                    if (!isRange(ny, nx) || map[ny][nx] == 1 || cleaning[ny][nx]) {
+                        continue;
                     }
+
+                    // 앞쪽 칸이 청소되지 않은 빈 칸인 경우 한 칸 전진한다.
+                    robot.y += dxy[robot.d][0];
+                    robot.x += dxy[robot.d][1];
+                    break;
                 }
             }
         }
 
+        findCleaningCount();
+    }
+
+    private static void findCleaningCount() {
         result = 0;
         for(boolean[] v : cleaning) {
             for(boolean vv : v) {
@@ -89,6 +89,30 @@ public class Main {
                     result++;
                 }
             }
+        }
+    }
+
+    private static boolean findCleaningStatus() {
+        boolean flag = false;
+        for (int i = 0; i < 4; i++) {
+            int ny = robot.y + dxy[i][0];
+            int nx = robot.x + dxy[i][1];
+
+            if (!isRange(ny, nx) || cleaning[ny][nx]) {
+                continue;
+            }
+
+            // 청소되지 않는 빈 칸이 있는 경우
+            if (map[ny][nx] == 0) {
+                flag = true;
+            }
+        }
+        return flag;
+    }
+
+    private static void cleanThisPoint() {
+        if(map[robot.y][robot.x] == 0) {
+            cleaning[robot.y][robot.x] = true;
         }
     }
 
