@@ -30,27 +30,34 @@ public class Solution {
 	public static void solve() {
 
 		for (int k = 1; k <= N + 1; k++) {
+			findByAllCenters(k);
+		}
+	}
+	
+	public static void findByAllCenters(int k) {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				
+				int count = findPersonInCircle(i, j, k);
+				int cost = (int) Math.pow(k, 2) + (int) Math.pow(k - 1, 2);
+				int profit = count * M - cost;
 
-			for (int i = 0; i < N; i++) {
-				for (int j = 0; j < N; j++) {
-
-					int count = 0;
-					for (Point p : persons) {
-						if (Math.abs(p.x - j) + Math.abs(p.y - i) < k) {
-							count++;
-						}
-					}
-
-					int cost = (int) Math.pow(k, 2) + (int) Math.pow(k - 1, 2);
-					int profit = count * M - cost;
-
-					if (profit >= 0) {
-						result = Math.max(result, count);
-					}
-
+				if (profit >= 0) {
+					result = Math.max(result, count);
 				}
+
 			}
 		}
+	}
+	
+	public static int findPersonInCircle(int y, int x, int k) {
+		int count = 0;
+		for (Point p : persons) {
+			if (Math.abs(p.x - x) + Math.abs(p.y - y) < k) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public static void init() throws Exception {
