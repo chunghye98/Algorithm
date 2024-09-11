@@ -1,60 +1,90 @@
 import java.io.*;
 import java.util.*;
 
-/* 13549, 숨바꼭질3
-- 시간 제한: 2초
-- 다익스트라 문제
-< 접근 방법 >
-
-
- */
 public class Main {
-    static class Node implements Comparable<Node> {
-        int index;
-        int cost;
 
-        public Node(final int index, final int cost) {
-            this.index = index;
-            this.cost = cost;
-        }
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static StringBuilder sb = new StringBuilder();
+	static int N;
+	static int K;
+	static int[] dist;
+	static List<List<Node>> graph;
+	static int[][] move = {{1, 1}, {-1, 1}, {2, 0}};
 
-        @Override
-        public int compareTo(final Node o) {
-            return Integer.compare(this.cost, o.cost);
-        }
-    }
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int start = Integer.parseInt(st.nextToken());
-        int end = Integer.parseInt(st.nextToken());
-        boolean[] visited = new boolean[100_000 + 1];
-        int result = Integer.MAX_VALUE;
+	static int result;
 
-        PriorityQueue<Node> queue = new PriorityQueue<>();
-        queue.add(new Node(start, 0));
+	public static void main(String[] args) throws Exception {
+		init();
+		solve(N);
+		output();
+	}
 
-        while (!queue.isEmpty()) {
-            Node curNode = queue.poll();
-            visited[curNode.index] = true;
+	public static void output() {
+		System.out.println(result);
+	}
 
-            if (curNode.index == end) {
-                result = curNode.cost;
-                break;
-            }
+	public static void solve(int n) {
+		PriorityQueue<Node> pq = new PriorityQueue<>();
+		pq.add(new Node(n, 0));
+		dist[n] = 0;
 
-            if (curNode.index * 2 < 100_001 && !visited[curNode.index * 2]) {
-                queue.add(new Node(curNode.index * 2, curNode.cost));
-            }
+		while(!pq.isEmpty()) {
+			Node cur = pq.poll();
+			int node = cur.node;
+			int cost = cur.cost;
 
-            if (curNode.index + 1 < 100_001 && !visited[curNode.index + 1]) {
-                queue.add(new Node(curNode.index + 1, curNode.cost + 1));
-            }
+			int nextNode;
+			int nextCost;
+			for (int i = 0; i < move.length; i++) {
+				if (i == 2) {
+					nextNode = node * move[i][0];
+				}else {
+					nextNode = node + move[i][0];
+				}
+				nextCost = cost + move[i][1];
 
-            if (curNode.index - 1 >= 0 && !visited[curNode.index - 1]) {
-                queue.add(new Node(curNode.index - 1, curNode.cost + 1));
-            }
-        }
-        System.out.println(result);
-    }
+				if(isRange(nextNode) && dist[nextNode] > nextCost) {
+					dist[nextNode] = nextCost;
+					pq.add(new Node(nextNode, nextCost));
+				}
+			}
+		}
+
+		result = dist[K];
+	}
+
+	public static boolean isRange(int node) {
+		return node >= 0 && node <= 100_000;
+	}
+	
+	public static void init() throws Exception {
+		String[] inputs = br.readLine().split(" ");
+		N = Integer.parseInt(inputs[0]);
+		K = Integer.parseInt(inputs[1]);
+
+		dist = new int[100_001];
+		graph = new ArrayList<>();
+		for (int i = 0; i <= K; i++) {
+			graph.add(new ArrayList<>());
+		}
+
+		Arrays.fill(dist, Integer.MAX_VALUE);
+
+		result = 0;
+	}
+
+	static class Node implements Comparable<Node>{
+		int node;
+		int cost;
+
+		Node(int node, int cost) {
+			this.node = node;
+			this.cost = cost;
+		}
+
+		@Override
+		public int compareTo(Node o) {
+			return Integer.compare(this.cost, o.cost);
+		}
+	}
 }
