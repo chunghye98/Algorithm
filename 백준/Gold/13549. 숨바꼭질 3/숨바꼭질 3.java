@@ -1,6 +1,12 @@
 import java.io.*;
 import java.util.*;
 
+/** 13549. 숨바꼭질3
+ * 메모리 23632 kb
+ * 시간 204 ms
+ *
+ * 다익스트라
+ */
 public class Main {
 
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -8,7 +14,6 @@ public class Main {
 	static int N;
 	static int K;
 	static int[] dist;
-	static List<List<Node>> graph;
 	static int[][] move = {{1, 1}, {-1, 1}, {2, 0}};
 
 	static int result;
@@ -56,18 +61,13 @@ public class Main {
 	public static boolean isRange(int node) {
 		return node >= 0 && node <= 100_000;
 	}
-	
+
 	public static void init() throws Exception {
 		String[] inputs = br.readLine().split(" ");
 		N = Integer.parseInt(inputs[0]);
 		K = Integer.parseInt(inputs[1]);
 
 		dist = new int[100_001];
-		graph = new ArrayList<>();
-		for (int i = 0; i <= K; i++) {
-			graph.add(new ArrayList<>());
-		}
-
 		Arrays.fill(dist, Integer.MAX_VALUE);
 
 		result = 0;
