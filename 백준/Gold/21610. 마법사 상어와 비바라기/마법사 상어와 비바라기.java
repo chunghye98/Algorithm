@@ -1,6 +1,12 @@
 import java.io.*;
 import java.util.*;
 
+/** 21610.마법사 상어와 비바라기
+ * 메모리 25836 kb
+ * 시간 496 ms
+ *
+ * 시뮬레이션
+ */
 public class Main {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -19,8 +25,31 @@ public class Main {
         output();
     }
 
-    private static void output() {
-        System.out.println(result);
+    private static void init() throws IOException {
+        String[] inputs = br.readLine().split(" ");
+        N = Integer.parseInt(inputs[0]);
+        M = Integer.parseInt(inputs[1]);
+
+        map = new int[N][N];
+        for (int i = 0; i < N; i++) {
+            inputs = br.readLine().split(" ");
+            for (int j = 0; j < N; j++) {
+                map[i][j] = Integer.parseInt(inputs[j]);
+            }
+        }
+
+        commands = new int[M][2];
+        for (int i = 0; i < M; i++) {
+            inputs = br.readLine().split(" ");
+            commands[i][0] = Integer.parseInt(inputs[0]);
+            commands[i][1] = Integer.parseInt(inputs[1]);
+        }
+
+        clouds = new ArrayList<>();
+        clouds.add(new int[]{N - 1, 0});
+        clouds.add(new int[]{N - 1, 1});
+        clouds.add(new int[]{N - 2, 0});
+        clouds.add(new int[]{N - 2, 1});
     }
 
     private static void solve() {
@@ -31,66 +60,6 @@ public class Main {
             make();
         }
         calculate();
-    }
-
-    private static void calculate() {
-        result = 0;
-        for (int[] m : map) {
-            for (int v : m) {
-                result += v;
-            }
-        }
-    }
-
-    private static void make() {
-        List<int[]> makedCloud = new ArrayList<>();
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if(map[i][j] >= 2 && !isCurrentCloud(i, j)) {
-                    map[i][j] -= 2;
-                    makedCloud.add(new int[]{i, j});
-                }
-            }
-        }
-        clouds = makedCloud;
-    }
-
-    private static boolean isCurrentCloud(int y, int x) {
-        for (int[] cloud : clouds) {
-            if (cloud[0] == y && cloud[1] == x) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static void copy() {
-        for(int[] cloud : clouds) {
-            int count = 0;
-            for (int i = 0; i < 4; i++) {
-                int ny = cloud[0] + diagonal[i][0];
-                int nx = cloud[1] + diagonal[i][1];
-
-                if (!isRange(ny, nx)) {
-                    continue;
-                }
-
-                if(map[ny][nx] > 0) {
-                    count++;
-                }
-            }
-            map[cloud[0]][cloud[1]] += count;
-        }
-    }
-
-    private static boolean isRange(int y, int x) {
-        return y >= 0 && x >= 0 && y < N && x < N;
-    }
-
-    private static void rain() {
-        for (int[] cloud : clouds) {
-            map[cloud[0]][cloud[1]] += 1;
-        }
     }
 
     private static void move(int[] command) {
@@ -119,30 +88,67 @@ public class Main {
         clouds = movedCloud;
     }
 
-    private static void init() throws IOException {
-        String[] inputs = br.readLine().split(" ");
-        N = Integer.parseInt(inputs[0]);
-        M = Integer.parseInt(inputs[1]);
+    private static void rain() {
+        for (int[] cloud : clouds) {
+            map[cloud[0]][cloud[1]] += 1;
+        }
+    }
 
-        map = new int[N][N];
+    private static void copy() {
+        for(int[] cloud : clouds) {
+            int count = 0;
+            for (int i = 0; i < 4; i++) {
+                int ny = cloud[0] + diagonal[i][0];
+                int nx = cloud[1] + diagonal[i][1];
+
+                if (!isRange(ny, nx)) {
+                    continue;
+                }
+
+                if(map[ny][nx] > 0) {
+                    count++;
+                }
+            }
+            map[cloud[0]][cloud[1]] += count;
+        }
+    }
+
+    private static boolean isRange(int y, int x) {
+        return y >= 0 && x >= 0 && y < N && x < N;
+    }
+
+    private static void make() {
+        List<int[]> makedCloud = new ArrayList<>();
         for (int i = 0; i < N; i++) {
-            inputs = br.readLine().split(" ");
             for (int j = 0; j < N; j++) {
-                map[i][j] = Integer.parseInt(inputs[j]);
+                if(map[i][j] >= 2 && !isCurrentCloud(i, j)) {
+                    map[i][j] -= 2;
+                    makedCloud.add(new int[]{i, j});
+                }
             }
         }
+        clouds = makedCloud;
+    }
 
-        commands = new int[M][2];
-        for (int i = 0; i < M; i++) {
-            inputs = br.readLine().split(" ");
-            commands[i][0] = Integer.parseInt(inputs[0]);
-            commands[i][1] = Integer.parseInt(inputs[1]);
+    private static boolean isCurrentCloud(int y, int x) {
+        for (int[] cloud : clouds) {
+            if (cloud[0] == y && cloud[1] == x) {
+                return true;
+            }
         }
+        return false;
+    }
 
-        clouds = new ArrayList<>();
-        clouds.add(new int[]{N - 1, 0});
-        clouds.add(new int[]{N - 1, 1});
-        clouds.add(new int[]{N - 2, 0});
-        clouds.add(new int[]{N - 2, 1});
+    private static void calculate() {
+        result = 0;
+        for (int[] m : map) {
+            for (int v : m) {
+                result += v;
+            }
+        }
+    }
+
+    private static void output() {
+        System.out.println(result);
     }
 }
