@@ -6,6 +6,18 @@ import java.util.*;
  * 시간 496 ms
  *
  * 시뮬레이션
+ *
+ * [풀이]
+ * 명령어 배열 초기화 후 다름 프로세스를 반복한다.
+ * 1. 구름 이동
+ * 2. 비 내림
+ * 3. 물 복사
+ * 4. 구름 만들기
+ * 마지막에 만들어진 물 바구니의 값을 누적해서 출력한다.
+ *
+ * [key]
+ * map을 벗어나면 반대쪽에서 이어지게 만들어야 한다.
+ * ny = (ny % N + N) % N; 이렇게 해야 음수가 나오지 않는다.
  */
 public class Main {
 
@@ -70,18 +82,9 @@ public class Main {
         for(int[] cloud : clouds) {
             int ny = cloud[0] + dxy[d][0] * num;
             int nx = cloud[1] + dxy[d][1] * num;
-
-            if(ny < 0) {
-                ny = (ny % N + N) % N;
-            }else {
-                ny = ny % N;
-            }
-
-            if (nx < 0) {
-                nx = (nx % N + N) % N;
-            }else {
-                nx = nx % N;
-            }
+            
+            ny = (ny % N + N) % N;
+            nx = (nx % N + N) % N;
 
             movedCloud.add(new int[]{ny, nx});
         }
