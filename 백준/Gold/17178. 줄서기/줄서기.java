@@ -1,98 +1,91 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static int N;
-    static PriorityQueue<Ticket> ticketSequence;
-    static List<Stack<Ticket>> tickets;
-    static Stack<Ticket> queue;
-    static String result;
+    static class Ticket implements Comparable<Ticket>{
+        String eng;
+        int num;
 
-    static class Ticket implements Comparable<Ticket> {
-        char alpha;
-        int number;
-
-        public Ticket(char alpha, int number) {
-            this.alpha = alpha;
-            this.number = number;
+        public Ticket(String eng, int num) {
+            super();
+            this.eng = eng;
+            this.num = num;
         }
 
         @Override
         public int compareTo(Ticket o) {
-            if (this.alpha == o.alpha) {
-                return Integer.compare(this.number, o.number);
+            int compareEng = this.eng.compareTo(o.eng);
+            if(compareEng != 0) {
+                return compareEng;
+            } else {
+                return this.num - o.num;
             }
-            return Character.compare(this.alpha, o.alpha);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            Ticket ticket = (Ticket) o;
-            return alpha == ticket.alpha && number == ticket.number;
         }
     }
 
+    private static int N;
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static String[][] waiting;
+    private static PriorityQueue<Ticket> answer = new PriorityQueue<>();
+    private static Queue<Ticket> line = new LinkedList<>();
+    private static Deque<Ticket> againWait = new LinkedList<>();
     public static void main(String[] args) throws IOException {
-        init();
-        solve();
-        output();
-    }
-
-    private static void init() throws IOException {
         N = Integer.parseInt(br.readLine());
-        ticketSequence = new PriorityQueue<>();
-        tickets = new ArrayList<>();
-        queue = new Stack<>();
+        waiting = new String[N][5];
 
-        for (int i = 0; i < N; i++) {
-            String[] inputs = br.readLine().split(" ");
-            Stack<Ticket> newTickets = new Stack<>();
-
-            for (int j = inputs.length - 1; j >= 0; j--) {
-                char alpha = inputs[j].split("-")[0].charAt(0);
-                int number = Integer.parseInt(inputs[j].split("-")[1]);
-
-                newTickets.push(new Ticket(alpha, number));
-                ticketSequence.add(new Ticket(alpha, number));
-            }
-
-            tickets.add(newTickets);
-        }
-    }
-
-    private static void solve() {
-        for (Stack<Ticket> ticket : tickets) {
-            while (!ticket.isEmpty()) {
-                if (queue.isEmpty()) {
-                    queue.add(ticket.pop());
-                } else if (ticket.peek().equals(ticketSequence.peek())) {
-                    ticket.pop();
-                    ticketSequence.poll();
-                } else if (queue.peek().equals(ticketSequence.peek())) {
-                    queue.pop();
-                    ticketSequence.poll();
-                } else {
-                    queue.push(ticket.pop());
-                }
+        for(int i = 0; i < N; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for(int j = 0; j < 5; j++) {
+                waiting[i][j] = st.nextToken();
             }
         }
 
-        result = "GOOD";
-        while (!queue.isEmpty()) {
-            if (queue.peek().equals(ticketSequence.peek())) {
-                queue.pop();
-                ticketSequence.poll();
-            }else {
-                result = "BAD";
-                return;
+        for(int i = 0; i < N; i++) {
+            for(int j = 0; j < 5; j++) {
+                String[] temp = waiting[i][j].split("-");
+                line.add(new Ticket(temp[0], Integer.parseInt(temp[1])));
+                answer.add(new Ticket(temp[0], Integer.parseInt(temp[1])));
             }
+
         }
+
+        if(check()) {
+            System.out.println("GOOD");
+        } else {
+            System.out.println("BAD");
+        }
+
     }
 
-    private static void output() {
-        System.out.println(result);
+    private static boolean check() {
+        while(!answer.isEmpty()) {
+            Ticket expected = answer.peek();
+
+            if(!line.isEmpty() && line.peek().eng.equals(expected.eng) && line.peek().num == expected.num) {
+                answer.poll();
+                line.poll();
+                continue;
+            }
+
+            if(!againWait.isEmpty() && againWait.peekLast().eng.equals(expected.eng) && againWait.peekLast().num == expected.num) {
+                againWait.pollLast();
+                answer.poll();
+                continue;
+            }
+
+            if(!line.isEmpty() && (!line.peek().eng.equals(expected.eng) || line.peek().num != expected.num)) {
+                againWait.add(line.poll());
+                continue;
+            }
+
+            if (line.isEmpty()) {
+                return false;
+            }
+
+        }
+
+        return true;
+
     }
+
 }
