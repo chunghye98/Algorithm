@@ -2,10 +2,8 @@ import java.io.*;
 
 public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	static StringBuilder sb = new StringBuilder();
 	static int N, M;
 	static String target;
-	static String condition;
 	static int count;
 
 	public static void main(String[] args) throws IOException {
@@ -21,29 +19,19 @@ public class Main {
 	}
 
 	private static void solve() {
-		makeCondition(1, sb.append("I"), "I");
-		findCount();
-	}
+		int patternLength = 0;
+		count = 0;
 
-	private static void makeCondition(int count, StringBuilder sb, String before) {
-		if (count == 2 * N + 1) {
-			condition = sb.toString();
-			return;
-		}
-
-		if (before.equals("I")) {
-			sb.append("O");
-			makeCondition(count + 1, sb, "O");
-		}else {
-			sb.append("I");
-			makeCondition(count + 1, sb, "I");
-		}
-	}
-
-	private static void findCount() {
-		for (int i = 0; i <= target.length() - condition.length(); i++) {
-			if (target.substring(i, i + condition.length()).equals(condition)) {
-				count++;
+		for (int i = 1; i < M - 1; i++) {
+			if (target.charAt(i - 1) == 'I' && target.charAt(i) == 'O' && target.charAt(i + 1) == 'I') {
+				patternLength++;
+				if (patternLength == N) {
+					patternLength--;
+					count++;
+				}
+				i++;
+			}else {
+				patternLength = 0;
 			}
 		}
 	}
