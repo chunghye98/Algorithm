@@ -1,59 +1,68 @@
+import java.util.*;
+import java.io.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
-
-// 미로 탐색
-public class Main {
-    static int w;
-    static int h;
-    static int map[][];
-    static boolean[][] visited;
-    static int[] dx = {0, -1, 0, 1}; // 상좌하우
-    static int[] dy = {-1, 0, 1, 0};
-
-    public static void main(String[] args) throws IOException {
-        input();
-        bfs();
-        System.out.println(map[h - 1][w - 1]);
+class Main {
+    private static int n;
+    private static int m;
+    private static int[][] board;
+    private static boolean[][] visited;
+    private static int[][] dyx = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}}; //상우하좌
+    
+    public static void main(String[] args) throws Exception {
+        init();
+        solve();
+        output();
     }
 
-    private static void bfs() {
-        visited[0][0] = true;
-        Queue<int[]> queue = new LinkedList<>();
-        queue.add(new int[]{0, 0});
-        while (!queue.isEmpty()) {
-            int[] temps = queue.poll();
-            for (int i = 0; i < 4; i++) {
-                int newH = temps[0] + dy[i];
-                int newW = temps[1] + dx[i];
-                if (newH >= 0 && newW >= 0 && newH < h && newW < w) {
-                    if (!visited[newH][newW] && map[newH][newW] == 1) {
-                        queue.add(new int[]{newH, newW});
-                        map[newH][newW] = map[temps[0]][temps[1]] + 1;
-                        visited[newH][newW] = true;
-                    }
-                }
-            }
-        }
-    }
-
-    private static void input() throws IOException {
+    public static void init() throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        h = Integer.parseInt(st.nextToken());
-        w = Integer.parseInt(st.nextToken());
-        map = new int[h][w];
-        visited = new boolean[h][w];
+        String[] input = br.readLine().split(" ");
+        n = Integer.parseInt(input[0]);
+        m = Integer.parseInt(input[1]);
 
-        for (int i = 0; i < h; i++) {
-            String[] temp = br.readLine().split("");
-            for (int j = 0; j < w; j++) {
-                map[i][j] = Integer.parseInt(temp[j]);
+        board = new int[n][m];
+        visited = new boolean[n][m];
+
+        for(int i=0; i<n; i++) {
+            input = br.readLine().split("");
+            for(int j=0; j<m; j++) {
+                board[i][j] = Integer.parseInt(input[j]);
             }
         }
+    }
+
+    public static void solve() {
+        bfs(0, 0);
+    }
+
+    public static void bfs(int y, int x) {
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.add(new int[]{y, x});
+        visited[y][x] = true;
+
+        while(!queue.isEmpty()) {
+            int[] parent = queue.poll();
+            int cy = parent[0];
+            int cx = parent[1];
+
+            for(int i=0; i<dyx.length; i++) {
+                int ny = cy + dyx[i][0];
+                int nx = cx + dyx[i][1];
+
+                if(!isRange(ny, nx) || visited[ny][nx] || board[ny][nx] == 0) continue;
+                
+                visited[ny][nx] = true;
+                queue.add(new int[]{ny, nx});
+                board[ny][nx] = board[cy][cx] + board[ny][nx];
+            }
+        }
+    }
+
+    public static boolean isRange(int y, int x) {
+        return y >= 0 && x >= 0 && y < n && x < m;
+    }
+
+    public static void output() {
+        System.out.println(board[n-1][m-1]);
     }
 }
