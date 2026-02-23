@@ -8,14 +8,16 @@ class Solution {
     private Set<Integer> primeSet = new HashSet<>();
     
     public int solution(String numbers) {
+        
+        // 1. 변수 선언
         n = numbers.length();
         numberArr = new int[n];
         visited = new boolean[n];
-        
-        for(int i = 0; i < n; i++) {
+        for(int i=0; i<n; i++) {
             numberArr[i] = numbers.charAt(i) - '0';
         }
         
+        // 2. 순열 검색
         permutation(numberArr, visited, 0, "");
         
         return primeSet.size();
@@ -28,15 +30,13 @@ class Solution {
                 primeSet.add(number);
             }
         }
-
-        if(depth == n) {
-            return;
-        }
+        
+        if(depth == n) return;
         
         for(int i=0; i<n; i++) {
             if(visited[i]) continue;
             visited[i] = true;
-            permutation(numberArr, visited, depth + 1, current + numberArr[i]);
+            permutation(numberArr, visited, depth+1, current + numberArr[i]);
             visited[i] = false;
         }
     }
@@ -48,4 +48,6 @@ class Solution {
         }
         return true;
     }
+    
+    
 }
